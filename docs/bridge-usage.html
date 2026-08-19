@@ -186,6 +186,22 @@
       </section>
 
       <section>
+        <h2 data-i18n="zh">克隆后先跑安装检查</h2>
+        <h2 data-i18n="en" hidden>After clone: run the setup check</h2>
+        <p data-i18n="zh">
+          打开本适配器仓库时，代理应运行检查并提示你完成设置。也可自己跑：
+          <code>uv run --python 3.12 python -m tools.check_bridge_setup</code>。
+          不要粘贴别人的个人 User Rules。
+        </p>
+        <p data-i18n="en" hidden>
+          When you open this adapter clone, the agent should run the setup
+          check and prompt you. You can also run
+          <code>uv run --python 3.12 python -m tools.check_bridge_setup</code>.
+          Do not paste someone else’s personal User Rules.
+        </p>
+      </section>
+
+      <section>
         <h2 data-i18n="zh">不要在课题里跑 uv sync</h2>
         <h2 data-i18n="en" hidden>Do not run uv sync in a science folder</h2>
         <p data-i18n="zh">
@@ -204,16 +220,18 @@
         <h2 data-i18n="zh">路径触发（最高优先，无需口令）</h2>
         <h2 data-i18n="en" hidden>Path trigger (no passphrase)</h2>
         <p data-i18n="zh">
-          若 Cursor 工作区或当前目录位于你的 Wisp 课题根目录下，即自动视为
-          WS 课题。首次相关对话就会接桥。示例路径：
-          <code>D:\AI4S_WispScience\</code>（请换成你自己的课题根）。
-          永远不要把本适配器仓库当成课题文件夹。
+          路径触发是<strong>可选</strong>的。设置环境变量
+          <code>WISP_TOPICS_ROOT</code>，或在
+          <code>.wisp/topics-root.local</code> 写一行绝对路径后，该根目录下的
+          工作区会自动视为 WS 课题。永远不要把本适配器仓库
+          （<code>wisp-cursor-bridge</code>）当成课题文件夹。
         </p>
         <p data-i18n="en" hidden>
-          A workspace under your Wisp topics root auto-qualifies as a WS
-          topic. The bridge runs on the first relevant turn. Example path:
-          <code>D:\AI4S_WispScience\</code> (use your own topics root).
-          Never treat this adapter repo as a science folder.
+          Path trigger is <strong>optional</strong>. Set env
+          <code>WISP_TOPICS_ROOT</code> or one path line in
+          <code>.wisp/topics-root.local</code>; workspaces under that root
+          auto-qualify as WS topics. Never treat this adapter repo
+          (<code>wisp-cursor-bridge</code>) as a science folder.
         </p>
       </section>
 

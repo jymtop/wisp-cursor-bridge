@@ -1,0 +1,4 @@
+# Copy this file to topics-root.local (gitignored) and keep one absolute path.
+# Workspaces under that folder auto-qualify as WS topic folders.
+# Example:
+# /home/you/WispTopics

@@ -16,7 +16,8 @@ Prefer the matching Wisp skill. Use a Cursor built-in skill only when the row sa
 | Python 3.12 env, deps | `/local-env-setup` | — |
 | Remote SSH compute | `/remote-compute-ssh` | `/probe-compute-environment` |
 | Read/write `research/HANDOFF.md` | `/wisp-handoff` | Always, at start and end |
-| Continue a WS task in a bare topic folder (wire overlay + HANDOFF) | `/ws-continue` | New chat in the topic folder; path under the Wisp topics root auto-fires, or say a passphrase (见 [docs/bridge-usage.html](../docs/bridge-usage.html)) |
+| Continue a WS task in a bare topic folder (wire overlay + HANDOFF) | `/ws-continue` | New chat in the topic folder; optional `WISP_TOPICS_ROOT` path trigger, or say a packaged passphrase (见 [README.md](../README.md) / [docs/bridge-usage.html](../docs/bridge-usage.html)) |
+| First-open git + overlay checklist after cloning this adapter | `python -m tools.check_bridge_setup` | Once per session; adapter vs topic prompts |
 | Git, PR, refactor this adapter | Cursor `/review`, `/create-rule`, `/split-to-prs` | Not literature skills |
 | Later Wisp plugins | After `python -m tools.sync_wisp_skills`, use the new `/name` | Follow that skill’s description |
 

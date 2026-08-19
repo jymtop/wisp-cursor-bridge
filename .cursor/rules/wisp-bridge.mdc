@@ -1,37 +1,51 @@
 ---
-description: Path under D:\AI4S_WispScience\ is a WS task (no passphrase). Spoken WS phrases also fire the bridge anywhere.
+description: Portable WS trigger phrases and first-open setup check for the Wisp-Cursor bridge
 alwaysApply: true
 ---
 
 # Wisp-Cursor bridge trigger
 
-Follow `~/.cursor/skills/ws-continue/SKILL.md`
-(project copy: `.cursor/skills/ws-continue/SKILL.md`).
+Follow `.cursor/skills/ws-continue/SKILL.md`
+(user copy, if present: `~/.cursor/skills/ws-continue/SKILL.md`).
 
-After wiring, do the user's xxx (the rest of the sentence) if they already
-specified work; otherwise do HANDOFF `next`. Check path + `mcp.json` once per
-session. Do not re-run sync if the overlay is already present.
+## First open / clone (once per session)
 
-## Path (highest priority — no passphrase)
+1. Run `uv run --python 3.12 python -m tools.check_bridge_setup` if
+   `tools/check_bridge_setup.py` exists (this adapter clone). If you cannot
+   run it, read that file and print the same prompt list.
+2. If this workspace **is** the adapter (origin URL ends with
+   `wisp-cursor-bridge`, or `INTEROP.md` + `gateway/` +
+   `tools/sync_wisp_skills.py`): tell the user they opened the bridge repo;
+   list the script’s checklist; do **not** treat it as a science topic.
+3. If this workspace looks like a topic folder without overlay
+   (`.cursor/mcp.json` missing or has no `wisp-bio`): prompt
 
-If the Cursor workspace root or `cwd` is under:
+   `uv run --directory <adapter-repo> --python 3.12 python -m tools.sync_wisp_skills --science <this-folder>`
 
-- `D:\AI4S_WispScience\`
-- `D:/AI4S_WispScience/`
-- case-insensitive `ai4s_wispscience`
+   then Reload Window. Never `uv sync` here. Never add `pyproject.toml` here.
+   Do not pass `--user-mcp` unless `~/.cursor/mcp.json` has no `wisp-bio`.
+4. If the user says any packaged trigger below: follow `ws-continue`
+   (wire overlay if needed, read `research/HANDOFF.md`, do their xxx or
+   HANDOFF `next`).
 
-then this **is** a Wisp Science (WS) topic folder. On the first relevant turn
-(new chat, or user starts work), run `ws-continue` even with no spoken
-passphrase.
+Do not re-run sync if the overlay is already present. Check path +
+`mcp.json` once per session.
 
-Do **not** treat `D:\Cursor-task\WispScienceCursor化` as a science folder
-even if someone mentions Wisp.
+## Path (optional — no passphrase)
 
-## Spoken phrases (still required when path is elsewhere)
+If the user configured a topics root — env `WISP_TOPICS_ROOT` or one path
+line in `.wisp/topics-root.local` (gitignored) — and the workspace is under
+that root, it **is** a Wisp Science (WS) topic folder. On the first relevant
+turn, run `ws-continue` even with no spoken passphrase.
+
+Never treat **this adapter repo** as a science folder. Detect adapter by:
+remote URL contains / ends with `wisp-cursor-bridge`, or presence of
+`INTEROP.md` + `gateway/` + `tools/sync_wisp_skills.py`.
+
+## Spoken phrases (work in any folder)
 
 Also fire if the user says any of these (or a close variant matching the
-Pattern). These work even if the folder is **not** under the Wisp topics root
-(example: `D:\AI4S_WispScience\`).
+Pattern).
 
 ### Continue / take over
 
@@ -105,4 +119,5 @@ Fire if the message contains (WS or Wisp or wisp or 维斯普) AND any of:
 
 OR the message starts with 这是WS / 这是 WS / 这是Wisp / 这是wisp / WS任务 / Wisp任务.
 
-Wire via `uv run --directory <adapter-repo> --python 3.12 python -m tools.sync_wisp_skills --science <workspace>`, then read `research/HANDOFF.md`. Never `uv sync` in a science folder. Never add `pyproject.toml`. Do not pass `--user-mcp` unless this machine has no user MCP yet. After first overlay, Reload Window.
+After wiring, do the user's xxx (the rest of the sentence) if they already
+specified work; otherwise do HANDOFF `next`.

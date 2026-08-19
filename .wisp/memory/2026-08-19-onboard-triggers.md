@@ -1,0 +1,3 @@
+- New clones of wisp-cursor-bridge should run `python -m tools.check_bridge_setup` once per session and follow the printed prompt list.
+- WS triggers are packaged in `.cursor/rules/wisp-bridge.mdc` and `/ws-continue`; path trigger is optional via `WISP_TOPICS_ROOT` or `.wisp/topics-root.local`.
+- This adapter repo is never a science folder. Do not paste personal User Rules into the public tutorial.

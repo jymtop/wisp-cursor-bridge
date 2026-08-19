@@ -235,11 +235,12 @@ def copy_adapter_overlay(science_root: Path) -> None:
     if src_skills.is_dir():
         dest_skills.mkdir(parents=True, exist_ok=True)
         shutil.copytree(src_skills, dest_skills, dirs_exist_ok=True, ignore=COPY_IGNORE)
-    src_rule = REPO_ROOT / ".cursor" / "rules" / "wisp-router.mdc"
-    if src_rule.is_file():
-        dest_rule = science_root / ".cursor" / "rules" / "wisp-router.mdc"
-        dest_rule.parent.mkdir(parents=True, exist_ok=True)
-        shutil.copy2(src_rule, dest_rule)
+    dest_rules = science_root / ".cursor" / "rules"
+    dest_rules.mkdir(parents=True, exist_ok=True)
+    for name in ("wisp-router.mdc", "wisp-bridge.mdc"):
+        src_rule = REPO_ROOT / ".cursor" / "rules" / name
+        if src_rule.is_file():
+            shutil.copy2(src_rule, dest_rules / name)
 
 
 def main(argv: list[str] | None = None) -> int:

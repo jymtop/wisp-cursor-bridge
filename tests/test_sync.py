@@ -1,7 +1,7 @@
 import json
 from pathlib import Path
 
-from tools.sync_wisp_skills import _plugin_mcp_servers, sync_skills
+from tools.sync_wisp_skills import _plugin_mcp_servers, copy_adapter_overlay, sync_skills
 
 
 def test_sync_copies_plugin_skill_and_skips_adapter(tmp_path: Path) -> None:
@@ -52,3 +52,14 @@ def test_plugin_mcp_expands_wisp_plugin_root(tmp_path: Path) -> None:
     assert servers["demo"]["args"][0].endswith("dist/index.js")
     assert servers["demo"]["env"]["WISP_PLUGIN_ROOT"] == str(root)
     assert servers["demo"]["cwd"] == str(root)
+
+
+def test_copy_adapter_overlay_includes_bridge_rule(tmp_path: Path) -> None:
+    science = tmp_path / "topic"
+    science.mkdir()
+    copy_adapter_overlay(science)
+    assert (science / ".cursor" / "rules" / "wisp-router.mdc").is_file()
+    assert (science / ".cursor" / "rules" / "wisp-bridge.mdc").is_file()
+    skill = science / ".cursor" / "skills" / "ws-continue" / "SKILL.md"
+    assert skill.is_file()
+    assert "wisp-cursor-adapter: true" in skill.read_text(encoding="utf-8")

@@ -1,5 +1,5 @@
 ---
-description: Prefer Wisp research skills; use Cursor skills for engineering; always persist HANDOFF
+description: Prefer Wisp research skills; use Cursor skills for engineering; always persist HANDOFF; git init if missing
 alwaysApply: true
 ---
 
@@ -7,6 +7,35 @@ alwaysApply: true
 
 You are in a Wisp-interop project. Membership models stay in Cursor. Scientific
 state lives on disk (`wisp.handoff.v1` in [INTEROP.md](INTEROP.md)).
+
+## First open (once per session)
+
+1. If `tools/check_bridge_setup.py` exists (adapter clone), run
+   `uv run --python 3.12 python -m tools.check_bridge_setup` and follow its
+   prompt list. Do **not** treat the adapter as a science topic.
+2. Else if `.cursor/mcp.json` is missing or has no `wisp-bio`, prompt:
+
+   `uv run --directory <adapter-repo> --python 3.12 python -m tools.sync_wisp_skills --science <this-folder>`
+
+   then Reload Window. Never `uv sync` here. Never add `pyproject.toml` here.
+   Do not pass `--user-mcp` unless `~/.cursor/mcp.json` has no `wisp-bio`.
+3. If the user says a packaged WS trigger, follow
+   `.cursor/skills/ws-continue/SKILL.md` (also `.cursor/rules/wisp-bridge.mdc`).
+
+## Ensure git (once per session)
+
+Cursor Multitask / worktrees need a git repo. At the **workspace root**:
+
+```text
+git -C "<WORKSPACE_ROOT>" rev-parse --is-inside-work-tree
+```
+
+If that fails, run `git -C "<WORKSPACE_ROOT>" init`. If root `.gitignore` is
+missing, write a short one that ignores `data/raw/`, `.env`, `.Trash/`.
+
+- Already a repo (this folder or a parent): do nothing.
+- Never `git config`. Never commit unless the user asked.
+- Never `git add data/raw/` or secrets.
 
 ## Before a research turn
 
