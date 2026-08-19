@@ -1,0 +1,13 @@
+Wisp × Cursor research bridge
+Copyright 2026 the adapter contributors
+
+This product includes materials from Wisp Science
+https://github.com/xuzhougeng/wisp-science
+
+- vendor/wisp-science/skills/ (Apache-2.0)
+- vendor/wisp-science/mcp-servers/bio-tools/ (Apache-2.0)
+
+Pinned commit: see vendor/wisp-science/WISP_PIN.txt
+
+The Wisp Science desktop/CLI application is AGPL-3.0-only and is not included
+in this repository.

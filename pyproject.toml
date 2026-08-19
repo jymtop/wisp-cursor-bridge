@@ -1,0 +1,41 @@
+[project]
+name = "wisp-cursor-bridge"
+version = "0.1.0"
+description = "Cursor-side adapter for Wisp Science workflows and wisp.handoff.v1"
+readme = "README.md"
+requires-python = ">=3.12"
+license = { text = "Apache-2.0" }
+authors = [{ name = "Wisp Cursor Bridge contributors" }]
+dependencies = [
+    "mcp>=2.0.0",
+    "anyio>=4.0.0",
+    "requests>=2.32.0",
+    "httpx>=0.27.0",
+    "xmltodict>=0.13.0",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=8.3.0",
+]
+
+[project.scripts]
+wisp-bio-gateway = "gateway.wisp_bio_gateway:main"
+wisp-history = "gateway.wisp_history:main"
+wisp-sync-skills = "tools.sync_wisp_skills:main"
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["gateway", "tools"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["."]
+addopts = "-q"
+
+[tool.ruff]
+line-length = 100
+target-version = "py312"

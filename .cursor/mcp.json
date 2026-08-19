@@ -1,0 +1,12 @@
+{
+  "mcpServers": {
+    "wisp-bio": {
+      "command": "uv",
+      "args": ["run", "--python", "3.12", "python", "-m", "gateway.wisp_bio_gateway"]
+    },
+    "wisp-history": {
+      "command": "uv",
+      "args": ["run", "--python", "3.12", "python", "-m", "gateway.wisp_history"]
+    }
+  }
+}

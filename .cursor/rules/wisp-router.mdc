@@ -1,0 +1,37 @@
+---
+description: Prefer Wisp research skills; use Cursor skills for engineering; always persist HANDOFF
+alwaysApply: true
+---
+
+# Wisp × Cursor router
+
+You are in a Wisp-interop project. Membership models stay in Cursor. Scientific
+state lives on disk (`wisp.handoff.v1` in [INTEROP.md](INTEROP.md)).
+
+## Before a research turn
+
+1. Read [research/HANDOFF.md](research/HANDOFF.md).
+2. Read the newest file in `research/sessions/`.
+3. Skim `.wisp/memory/` when it exists.
+4. Read [research/SKILL-CATALOG.md](research/SKILL-CATALOG.md) if the task type is unclear.
+
+## Skill routing
+
+- Literature, databases, omics, statistics, Methods, scientific figures: use a
+  Wisp skill under `.cursor/skills/` (`/literature-review`, `/analysis-workflow`,
+  `/singlecell-qc`, `/paper-narrative`, …) and `wisp-bio` MCP
+  (`search_bio_tools` then `use_bio_tool`). Do not invent PMIDs or DOIs.
+- Git, PRs, refactoring this adapter repo, Cursor rules/hooks: use Cursor
+  built-in skills.
+- "Write analysis code": follow the Wisp analysis skill for scientific steps;
+  use Cursor file/terminal tools to land Python 3.12 scripts under
+  `research/scripts/` or a module folder from `analysis-workflow`.
+- Unsure: ask, or wait for an explicit `/skill-name`. Explicit slash beats routing.
+- Do not enable KEGG / CADD / PanglaoDB / Cell Model Passports tools.
+
+## After a chunk of work
+
+Update `research/HANDOFF.md` (`last_app: cursor`, `next`, `key_files`).
+Append `research/sessions/cursor-YYYY-MM-DD-topic.md`.
+Write short facts to `.wisp/memory/`.
+Scripts must be rerunnable from files. Chat is not the source of truth.
