@@ -1,5 +1,10 @@
 # Wisp × Cursor research bridge
 
+[使用说明 中 / EN](docs/bridge-usage.html)
+
+课题文件夹打开、路径触发与口令见上面的双语页（页内有 **中 / EN** 按钮）。
+Open a Wisp topic folder (not this adapter); path and passphrase triggers are on that page.
+
 Cursor-side adapter for [Wisp Science](https://github.com/xuzhougeng/wisp-science).
 Use Wisp workflows (skills + bio MCP) with a Cursor membership. Research state
 lives on disk as `wisp.handoff.v1` so Wisp can continue after Cursor, and the

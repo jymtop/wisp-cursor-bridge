@@ -1,0 +1,3 @@
+- Adapter usage is documented in `docs/bridge-usage.html` (中 / EN toggle, localStorage `wisp-bridge-lang`).
+- Path under the Wisp topics root auto-qualifies as a WS folder; this adapter repo never does.
+- Overlay: `uv run --directory <adapter-repo> --python 3.12 python -m tools.sync_wisp_skills --science <topic-folder>`. `--user-mcp` is optional.

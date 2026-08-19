@@ -74,3 +74,13 @@ def test_history_lists_frame_and_transcript(tmp_path: Path) -> None:
 
 def test_history_missing_db(tmp_path: Path) -> None:
     assert "no sqlite" in invoke(list_wisp_sessions, str(tmp_path))
+
+
+def test_history_respects_wisp_sqlite_env(tmp_path: Path, monkeypatch) -> None:
+    db = tmp_path / "app" / "wisp.sqlite"
+    _make_db(db)
+    empty = tmp_path / "empty-project"
+    empty.mkdir()
+    monkeypatch.setenv("WISP_SQLITE", str(db))
+    listed = invoke(list_wisp_sessions, str(empty))
+    assert "frm-1" in listed

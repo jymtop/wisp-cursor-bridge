@@ -19,7 +19,13 @@ uv run --python 3.12 pytest
 uv run --python 3.12 python -m tools.sync_wisp_skills
 ```
 
-Approve `wisp-bio` and `wisp-history` in Cursor Settings → Tools & MCP. Live bio calls need `WISP_BIO_LIVE=1`.
+Overlay a topic folder (Python 3.12). Add `--user-mcp` only if this machine has no user MCP yet:
+
+```powershell
+uv run --python 3.12 python -m tools.sync_wisp_skills --science "<topic-folder>"
+```
+
+Then approve `wisp-bio`, `wisp-history`, and `figure-library` in Cursor Settings → Tools & MCP. Live bio calls need `WISP_BIO_LIVE=1`.
 
 ## Coding Style & Naming Conventions
 
