@@ -1,0 +1,361 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Wisp × Cursor bridge — 使用说明</title>
+  <style>
+    :root {
+      --ink: #1a1a1a;
+      --muted: #4a4a4a;
+      --rule: #c8c8c8;
+      --paper: #f7f6f3;
+      --card: #ffffff;
+      --accent: #1f3d2b;
+      --btn-bg: #f0eee8;
+      --btn-on: #1f3d2b;
+      --btn-on-ink: #ffffff;
+    }
+    * { box-sizing: border-box; }
+    html { font-size: 16px; }
+    body {
+      margin: 0;
+      color: var(--ink);
+      background: var(--paper);
+      font-family: "Segoe UI", "PingFang SC", "Noto Sans SC", "Hiragino Sans GB",
+        "Microsoft YaHei", sans-serif;
+      line-height: 1.55;
+    }
+    .wrap {
+      max-width: 46rem;
+      margin: 0 auto;
+      padding: 1.5rem 1.25rem 3rem;
+    }
+    header.page-head {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 1rem;
+      padding-bottom: 1rem;
+      border-bottom: 1px solid var(--rule);
+      margin-bottom: 1.5rem;
+    }
+    .brand {
+      min-width: 0;
+    }
+    .brand p {
+      margin: 0.15rem 0 0;
+      color: var(--muted);
+      font-size: 0.9rem;
+    }
+    h1 {
+      margin: 0;
+      font-size: 1.45rem;
+      font-weight: 650;
+      letter-spacing: -0.02em;
+    }
+    .lang-toggle {
+      flex: 0 0 auto;
+      display: inline-flex;
+      border: 1px solid var(--ink);
+      background: var(--btn-bg);
+      padding: 0;
+    }
+    .lang-toggle button {
+      appearance: none;
+      border: 0;
+      margin: 0;
+      padding: 0.35rem 0.7rem;
+      background: transparent;
+      color: var(--ink);
+      font: inherit;
+      font-size: 0.8rem;
+      font-weight: 650;
+      letter-spacing: 0.04em;
+      cursor: pointer;
+    }
+    .lang-toggle button[aria-pressed="true"] {
+      background: var(--btn-on);
+      color: var(--btn-on-ink);
+    }
+    .lang-toggle button:focus-visible {
+      outline: 2px solid var(--accent);
+      outline-offset: 2px;
+    }
+    h2 {
+      margin: 1.75rem 0 0.55rem;
+      font-size: 1.05rem;
+      font-weight: 650;
+    }
+    p, li { color: var(--ink); }
+    p { margin: 0.45rem 0; }
+    ul { margin: 0.4rem 0 0.6rem; padding-left: 1.2rem; }
+    li + li { margin-top: 0.25rem; }
+    code, pre {
+      font-family: "Cascadia Mono", "Consolas", "SFMono-Regular", monospace;
+      font-size: 0.86em;
+    }
+    code {
+      background: #eeeae3;
+      padding: 0.08em 0.28em;
+    }
+    pre {
+      margin: 0.7rem 0 1rem;
+      padding: 0.85rem 1rem;
+      background: var(--card);
+      border: 1px solid var(--rule);
+      overflow-x: auto;
+      white-space: pre-wrap;
+      word-break: break-word;
+    }
+    .note {
+      margin: 0.8rem 0;
+      padding: 0.7rem 0.85rem;
+      border: 1px solid var(--rule);
+      background: var(--card);
+    }
+    .note p { margin: 0; }
+    footer.page-foot {
+      margin-top: 2.25rem;
+      padding-top: 0.85rem;
+      border-top: 1px solid var(--rule);
+      color: var(--muted);
+      font-size: 0.85rem;
+    }
+    [hidden] { display: none !important; }
+    @media print {
+      body { background: #fff; }
+      .wrap { max-width: none; padding: 0; }
+      header.page-head { border-color: #000; }
+      .lang-toggle { display: none; }
+      pre, .note { border-color: #999; background: #fff; }
+      a { color: inherit; text-decoration: none; }
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <header class="page-head">
+      <div class="brand">
+        <h1 data-i18n="zh">Wisp × Cursor 桥：使用说明</h1>
+        <h1 data-i18n="en" hidden>Wisp × Cursor bridge: usage</h1>
+        <p data-i18n="zh">课题文件夹里交接；本仓库只是适配器。</p>
+        <p data-i18n="en" hidden>Handoff lives in the topic folder; this repo is only the adapter.</p>
+      </div>
+      <div class="lang-toggle" role="group" aria-label="Language">
+        <button type="button" id="lang-zh" aria-pressed="true">中</button>
+        <button type="button" id="lang-en" aria-pressed="false">EN</button>
+      </div>
+    </header>
+
+    <main>
+      <section>
+        <h2 data-i18n="zh">这是什么</h2>
+        <h2 data-i18n="en" hidden>What this is</h2>
+        <p data-i18n="zh">
+          Cursor 负责会员模型与改文件；Wisp Science 负责科研技能与生物工具。
+          科学状态写在磁盘上的 <code>wisp.handoff.v1</code>（<code>research/HANDOFF.md</code>、
+          <code>research/sessions/</code>、<code>.wisp/memory/</code>）。
+          两侧聊天气泡不同步。
+        </p>
+        <p data-i18n="en" hidden>
+          Cursor membership models stay in Cursor. Wisp Science workflows
+          (skills and bio tools) run through the adapter. Scientific state
+          lives on disk as <code>wisp.handoff.v1</code>
+          (<code>research/HANDOFF.md</code>, <code>research/sessions/</code>,
+          <code>.wisp/memory/</code>). Chats do not sync.
+        </p>
+      </section>
+
+      <section>
+        <h2 data-i18n="zh">打开哪里</h2>
+        <h2 data-i18n="en" hidden>Where to open</h2>
+        <p data-i18n="zh">
+          在 Cursor 里打开 Wisp <strong>课题文件夹</strong>，不要打开本适配器仓库。
+          菜单：<strong>File → Open Folder</strong>，选课题根目录
+          （里面应有或将有 <code>research/HANDOFF.md</code>）。
+          适配器仓库只用于改桥、跑测试、同步技能。
+        </p>
+        <p data-i18n="en" hidden>
+          Open the Wisp <strong>topic folder</strong> in Cursor, not this
+          adapter repo. Use <strong>File → Open Folder</strong> and pick the
+          topic root (it should contain, or will get,
+          <code>research/HANDOFF.md</code>). Open the adapter only to change
+          the bridge, run tests, or sync skills.
+        </p>
+      </section>
+
+      <section>
+        <h2 data-i18n="zh">不要在课题里跑 uv sync</h2>
+        <h2 data-i18n="en" hidden>Do not run uv sync in a science folder</h2>
+        <p data-i18n="zh">
+          不要在课题文件夹里执行 <code>uv sync</code>，也不要在那里添加
+          <code>pyproject.toml</code>。
+          <code>uv sync --python 3.12</code> 只属于本适配器仓库。
+        </p>
+        <p data-i18n="en" hidden>
+          Do not run <code>uv sync</code> in a science folder, and do not add
+          <code>pyproject.toml</code> there.
+          <code>uv sync --python 3.12</code> belongs only in this adapter repo.
+        </p>
+      </section>
+
+      <section>
+        <h2 data-i18n="zh">路径触发（最高优先，无需口令）</h2>
+        <h2 data-i18n="en" hidden>Path trigger (no passphrase)</h2>
+        <p data-i18n="zh">
+          若 Cursor 工作区或当前目录位于你的 Wisp 课题根目录下，即自动视为
+          WS 课题。首次相关对话就会接桥。示例路径：
+          <code>D:\AI4S_WispScience\</code>（请换成你自己的课题根）。
+          永远不要把本适配器仓库当成课题文件夹。
+        </p>
+        <p data-i18n="en" hidden>
+          A workspace under your Wisp topics root auto-qualifies as a WS
+          topic. The bridge runs on the first relevant turn. Example path:
+          <code>D:\AI4S_WispScience\</code> (use your own topics root).
+          Never treat this adapter repo as a science folder.
+        </p>
+      </section>
+
+      <section>
+        <h2 data-i18n="zh">口令触发（课题根以外也有效）</h2>
+        <h2 data-i18n="en" hidden>Spoken triggers (any folder)</h2>
+        <p data-i18n="zh">
+          文件夹不在课题根下时，用口令。说完口令后若已写明要做的事，就做那件事；
+          否则做该课题 <code>HANDOFF</code> 的 <code>next</code>。
+        </p>
+        <p data-i18n="en" hidden>
+          If the folder is not under the topics root, say a passphrase.
+          After wiring, do the rest of the sentence if you already specified
+          work; otherwise do that topic’s HANDOFF <code>next</code>.
+        </p>
+        <ul data-i18n="zh">
+          <li>继续 / 接管 / 接上 + WS / Wisp + 任务 / 桥（如「继续这个WS任务」「接上Wisp桥」）</li>
+          <li>这是WS任务，帮我 / 请帮我 / 我要…（Wisp 任务同理）</li>
+          <li>读HANDOFF继续 · 读 HANDOFF 继续 · 读交接继续</li>
+          <li>英文：<code>continue the WS task</code>、<code>wire the wisp bridge</code>、<code>take over this WS task</code>、<code>use the wisp-cursor bridge here</code></li>
+        </ul>
+        <ul data-i18n="en" hidden>
+          <li>Chinese: 继续 / 接管 / 接上 + WS / Wisp + 任务 / 桥 (e.g. 继续这个WS任务, 接上Wisp桥)</li>
+          <li>这是WS任务，帮我 / 请帮我 / 我要… (same with Wisp)</li>
+          <li>读HANDOFF继续 · 读 HANDOFF 继续 · 读交接继续</li>
+          <li>English: <code>continue the WS task</code>, <code>wire the wisp bridge</code>, <code>take over this WS task</code>, <code>use the wisp-cursor bridge here</code></li>
+        </ul>
+      </section>
+
+      <section>
+        <h2 data-i18n="zh">安装 overlay</h2>
+        <h2 data-i18n="en" hidden>Install overlay</h2>
+        <p data-i18n="zh">
+          若课题里还没有 <code>.cursor/mcp.json</code>（或不含 <code>wisp-bio</code>），
+          在适配器仓库用 Python 3.12 跑下面命令。已接过桥则不要重复同步。
+        </p>
+        <p data-i18n="en" hidden>
+          If the topic folder has no <code>.cursor/mcp.json</code> (or it
+          lacks <code>wisp-bio</code>), run this from the adapter with
+          Python 3.12. Do not re-run sync if the overlay is already present.
+        </p>
+        <pre>uv run --directory &lt;adapter-repo&gt; --python 3.12 python -m tools.sync_wisp_skills --science &lt;topic-folder&gt;</pre>
+        <p data-i18n="zh">
+          <code>--user-mcp</code> 是可选项：仅当本机还没有用户级 MCP
+          （<code>~/.cursor/mcp.json</code>）时才加。已有用户 MCP 时不要当作默认必加参数。
+          第一次写入 overlay 后，可能需要 <strong>Reload Window</strong>，
+          并在 Settings → Tools &amp; MCP 批准 <code>wisp-bio</code> /
+          <code>wisp-history</code> / <code>figure-library</code>。
+        </p>
+        <p data-i18n="en" hidden>
+          <code>--user-mcp</code> is optional: add it only if this machine
+          has no user-level MCP yet (<code>~/.cursor/mcp.json</code>). Do not
+          treat it as a required default when user MCP already exists.
+          After the first overlay, you may need <strong>Reload Window</strong>
+          and to approve <code>wisp-bio</code> / <code>wisp-history</code> /
+          <code>figure-library</code> in Settings → Tools &amp; MCP.
+        </p>
+      </section>
+
+      <section>
+        <h2 data-i18n="zh">回到 Wisp 继续</h2>
+        <h2 data-i18n="en" hidden>Continue in Wisp</h2>
+        <p data-i18n="zh">
+          在 Wisp 打开<strong>同一个</strong>课题文件夹，说「读 HANDOFF 继续」。
+          内核变量不会带过去；脚本必须能从文件重跑。
+        </p>
+        <p data-i18n="en" hidden>
+          Open the <strong>same</strong> folder in Wisp and say
+          读 HANDOFF 继续. Kernel variables do not carry over; scripts must
+          be rerunnable from files.
+        </p>
+      </section>
+
+      <section>
+        <h2 data-i18n="zh">User Rules（任意文件夹都能触发口令）</h2>
+        <h2 data-i18n="en" hidden>User Rules (passphrases in any folder)</h2>
+        <p data-i18n="zh">
+          Cursor → Settings → Rules → User。加一段短规则，指向
+          <code>~/.cursor/skills/ws-continue/SKILL.md</code>
+          （技能名 <code>ws-continue</code>）。
+          内容写清：课题根路径自动接桥；口令在其他目录也有效；
+          不要把适配器仓库当成课题。
+        </p>
+        <p data-i18n="en" hidden>
+          Cursor → Settings → Rules → User. Add a short block that points at
+          <code>~/.cursor/skills/ws-continue/SKILL.md</code>
+          (skill name <code>ws-continue</code>). State that a workspace under
+          the topics root auto-wires, spoken passphrases still work elsewhere,
+          and the adapter repo is never a science folder.
+        </p>
+        <div class="note">
+          <p data-i18n="zh">
+            协议全文见仓库根目录 <a href="../INTEROP.md">INTEROP.md</a>
+            （<code>wisp.handoff.v1</code>）。
+          </p>
+          <p data-i18n="en" hidden>
+            The on-disk contract is <a href="../INTEROP.md">INTEROP.md</a>
+            (<code>wisp.handoff.v1</code>) at the repo root.
+          </p>
+        </div>
+      </section>
+    </main>
+
+    <footer class="page-foot">
+      <span data-i18n="zh">适配器仓库文档。语言选择保存在本机 localStorage（<code>wisp-bridge-lang</code>）。</span>
+      <span data-i18n="en" hidden>Adapter-repo documentation. Language is stored in localStorage (<code>wisp-bridge-lang</code>).</span>
+    </footer>
+  </div>
+
+  <script>
+    (function () {
+      var KEY = "wisp-bridge-lang";
+      var zhBtn = document.getElementById("lang-zh");
+      var enBtn = document.getElementById("lang-en");
+
+      function detect() {
+        try {
+          var saved = localStorage.getItem(KEY);
+          if (saved === "zh" || saved === "en") return saved;
+        } catch (e) {}
+        var nav = String(navigator.language || "").toLowerCase();
+        return nav.indexOf("zh") === 0 ? "zh" : "en";
+      }
+
+      function apply(lang) {
+        var isZh = lang === "zh";
+        document.documentElement.lang = isZh ? "zh-CN" : "en";
+        document.title = isZh
+          ? "Wisp × Cursor 桥 — 使用说明"
+          : "Wisp × Cursor bridge — usage";
+        document.querySelectorAll("[data-i18n]").forEach(function (el) {
+          el.hidden = el.getAttribute("data-i18n") !== lang;
+        });
+        zhBtn.setAttribute("aria-pressed", isZh ? "true" : "false");
+        enBtn.setAttribute("aria-pressed", isZh ? "false" : "true");
+        try { localStorage.setItem(KEY, lang); } catch (e) {}
+      }
+
+      zhBtn.addEventListener("click", function () { apply("zh"); });
+      enBtn.addEventListener("click", function () { apply("en"); });
+      apply(detect());
+    })();
+  </script>
+</body>
+</html>

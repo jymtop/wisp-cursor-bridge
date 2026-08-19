@@ -1,14 +1,20 @@
 # HANDOFF
 
-- last_app: wisp
-- last_at: 2026-08-19 10:15
+- last_app: cursor
+- last_at: 2026-08-19 18:40
 - status: in_progress
-- question: TP53 recent reviews and a rerunnable local QC script
-- next: In Cursor, add five recent review PMIDs via wisp-bio and finish research/scripts/qc_pbmc.py
+- question: How to continue a Wisp Science (WS) task from a topic folder via path or spoken trigger
+- next: Open a Wisp topic folder in Cursor (not this adapter) and continue from that folder’s HANDOFF
 - key_files:
-  - research/sessions/wisp-2026-08-19-tp53.md
-  - research/scripts/qc_pbmc.py
+  - docs/bridge-usage.html
+  - .cursor/skills/ws-continue/SKILL.md
+  - .cursor/rules/wisp-bridge.mdc
+  - research/SKILL-CATALOG.md
+  - ~/.cursor/skills/ws-continue/SKILL.md
 - open_questions:
-  - Whether to exclude doublets
+  - Whether Cursor Settings → Tools & MCP needs a one-time approve of project-level servers in a newly overlaid science window
 - do_not:
-  - do not modify raw/
+  - do not add pyproject.toml to science topic folders
+  - do not run `uv sync` outside this adapter repo
+  - do not treat this adapter folder as the daily science project
+  - do not pass `--user-mcp` as the required default if user MCP already exists

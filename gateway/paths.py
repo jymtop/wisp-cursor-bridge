@@ -28,8 +28,26 @@ def project_root(override: str | Path | None = None) -> Path:
     return cwd
 
 
+def app_wisp_sqlite() -> Path | None:
+    """Desktop Wisp library (sessions live here, not always in the topic folder)."""
+    appdata = os.environ.get("APPDATA")
+    if not appdata:
+        return None
+    path = Path(appdata) / "science.wisp-science" / "wisp-science" / "wisp.sqlite"
+    return path if path.is_file() else None
+
+
 def wisp_sqlite(root: Path | None = None) -> Path:
-    return (root or project_root()) / ".wisp" / "wisp.sqlite"
+    env = os.environ.get("WISP_SQLITE")
+    if env:
+        return Path(env).expanduser().resolve()
+    if root is not None:
+        return Path(root).expanduser().resolve() / ".wisp" / "wisp.sqlite"
+    project = project_root() / ".wisp" / "wisp.sqlite"
+    if project.is_file():
+        return project
+    app = app_wisp_sqlite()
+    return app if app is not None else project
 
 
 def plugin_roots() -> list[Path]:

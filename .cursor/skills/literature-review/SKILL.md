@@ -22,3 +22,5 @@ Never invent a DOI, PMID, or retraction status. Cite as `[Author Year](https://d
 Scope → sweep (live) → expand citations if tools allow → verify IDs → write by theme → save Markdown under `research/notes/` and update HANDOFF.
 
 Save the review path in `key_files`. Do not dump process narration into the paper.
+
+When the user asks for HTML (or PDF-via-print), write a self-contained report under the science project's `results/reports/` (see `.wisp/WISP.md`). Keep citations as `[Author Year](https://doi.org/...)`. The file must open in a browser and print to A4.
