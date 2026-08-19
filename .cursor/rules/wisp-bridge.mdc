@@ -13,18 +13,25 @@ Follow `.cursor/skills/ws-continue/SKILL.md`
 1. Run `uv run --python 3.12 python -m tools.check_bridge_setup` if
    `tools/check_bridge_setup.py` exists (this adapter clone). If you cannot
    run it, read that file and print the same prompt list.
-2. If this workspace **is** the adapter (origin URL ends with
-   `wisp-cursor-bridge`, or `INTEROP.md` + `gateway/` +
-   `tools/sync_wisp_skills.py`): tell the user they opened the bridge repo;
+2. Git check: is `git` installed, and is this folder already a git
+   work tree (`git rev-parse --is-inside-work-tree` or `.git` present)?
+   If **not** a repo, **prompt** the user to run `git init` here (local
+   history and rollback) or clone https://github.com/jymtop/wisp-cursor-bridge
+   if they meant the adapter. If it **is** already a repo, say so briefly
+   (已 git init). Do not ask them to `git push`, set origin, or publish
+   the folder.
+3. If this workspace **is** the adapter (`INTEROP.md` + `gateway/` +
+   `tools/sync_wisp_skills.py`; a `wisp-cursor-bridge` remote is only a
+   weak extra hint): tell the user they opened the bridge repo;
    list the script’s checklist; do **not** treat it as a science topic.
-3. If this workspace looks like a topic folder without overlay
+4. If this workspace looks like a topic folder without overlay
    (`.cursor/mcp.json` missing or has no `wisp-bio`): prompt
 
    `uv run --directory <adapter-repo> --python 3.12 python -m tools.sync_wisp_skills --science <this-folder>`
 
    then Reload Window. Never `uv sync` here. Never add `pyproject.toml` here.
    Do not pass `--user-mcp` unless `~/.cursor/mcp.json` has no `wisp-bio`.
-4. If the user says any packaged trigger below: follow `ws-continue`
+5. If the user says any packaged trigger below: follow `ws-continue`
    (wire overlay if needed, read `research/HANDOFF.md`, do their xxx or
    HANDOFF `next`).
 
@@ -38,9 +45,9 @@ line in `.wisp/topics-root.local` (gitignored) — and the workspace is under
 that root, it **is** a Wisp Science (WS) topic folder. On the first relevant
 turn, run `ws-continue` even with no spoken passphrase.
 
-Never treat **this adapter repo** as a science folder. Detect adapter by:
-remote URL contains / ends with `wisp-cursor-bridge`, or presence of
-`INTEROP.md` + `gateway/` + `tools/sync_wisp_skills.py`.
+Never treat **this adapter repo** as a science folder. Detect adapter by
+files: `INTEROP.md` + `gateway/` + `tools/sync_wisp_skills.py`. A matching
+remote URL is only a weak extra hint — not the git-init check.
 
 ## Spoken phrases (work in any folder)
 

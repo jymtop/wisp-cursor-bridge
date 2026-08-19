@@ -4,7 +4,7 @@ Cursor-side adapter for [Wisp Science](https://github.com/xuzhougeng/wisp-scienc
 
 ## First open / clone
 
-Once per session run `uv run --python 3.12 python -m tools.check_bridge_setup` (or read `tools/check_bridge_setup.py`). If this workspace is the adapter (`origin` ends with `wisp-cursor-bridge`, or `INTEROP.md` + `gateway/` + `tools/sync_wisp_skills.py`), show the script’s prompt list — do **not** treat it as a science topic. If it is a topic folder without `wisp-bio` in `.cursor/mcp.json`, prompt:
+Once per session run `uv run --python 3.12 python -m tools.check_bridge_setup` (or read `tools/check_bridge_setup.py`). The git check is whether `git init` already happened (`rev-parse --is-inside-work-tree` or `.git`). If not a repo, **prompt** the user to `git init` here for local history/rollback, or clone https://github.com/jymtop/wisp-cursor-bridge if they meant the adapter. If it is already a repo, say so briefly. Do not ask them to push or set origin. Adapter vs topic is **files** (`INTEROP.md` + `gateway/` + `tools/sync_wisp_skills.py`); a matching remote is only a weak extra hint. If this workspace is the adapter, show the script’s prompt list — do **not** treat it as a science topic. If it is a topic folder without `wisp-bio` in `.cursor/mcp.json`, prompt:
 
 `uv run --directory <adapter-repo> --python 3.12 python -m tools.sync_wisp_skills --science <this-folder>`
 
@@ -16,7 +16,7 @@ then Reload Window. Never `uv sync` or add `pyproject.toml` in a topic folder. D
 
 - `gateway/` — `wisp-bio` (3-tool MCP over ~247 bio-tools) and read-only `wisp-history`.
 - `tools/sync_wisp_skills.py` — mirrors Wisp / plugin `SKILL.md` into `.cursor/skills/`.
-- `tools/check_bridge_setup.py` — git + overlay prompt list for new clones.
+- `tools/check_bridge_setup.py` — local `git init` + overlay prompt list for new clones.
 - `vendor/wisp-science/` — pinned sparse snapshot (`mcp-servers/bio-tools`, `skills`).
 - `research/` — HANDOFF, sessions, scripts (Python 3.12). `.wisp/` — `WISP.md` and `memory/`.
 - `.cursor/` — MCP, adapted skills, router + bridge rules. Cursor-only; not INTEROP.

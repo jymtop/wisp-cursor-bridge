@@ -6,8 +6,9 @@ description: >
   or cwd is under env WISP_TOPICS_ROOT or the path in .wisp/topics-root.local,
   treat it as a Wisp Science (WS) topic folder and run this skill on the first
   relevant turn — no spoken passphrase required. Never treat a
-  wisp-cursor-bridge adapter clone as a science folder (origin ends with
-  wisp-cursor-bridge, or INTEROP.md + gateway/ + tools/sync_wisp_skills.py).
+  wisp-cursor-bridge adapter clone as a science folder (INTEROP.md +
+  gateway/ + tools/sync_wisp_skills.py; a matching remote is only a weak
+  extra hint, not the git-init check).
   ALSO WHEN the user says any of: 继续这个WS任务, 继续WS任务, 继续这个 Wisp 任务,
   继续这个wisp任务, 继续wisp任务, 继续 Wisp 任务, 接管这个WS任务, 接管WS任务,
   接管这个Wisp任务, 接管wisp任务, 接上这个WS任务, 接上WS任务, 接上Wisp桥,
@@ -53,9 +54,9 @@ If the Cursor workspace root or `cwd` is under a configured topics root:
 then this **is** a Wisp Science (WS) topic folder. On the **first relevant
 turn** in that workspace (new chat, or user starts work), run this skill.
 
-Never treat the **adapter** as a science folder: `origin` ends with
-`wisp-cursor-bridge`, or the folder has `INTEROP.md` + `gateway/` +
-`tools/sync_wisp_skills.py`.
+Never treat the **adapter** as a science folder: the folder has
+`INTEROP.md` + `gateway/` + `tools/sync_wisp_skills.py`. A matching
+remote is only a weak extra hint — not what “git 检测” means.
 
 ### Continue / take over
 
@@ -127,17 +128,21 @@ and `<WORKSPACE_ROOT>` with the topic folder absolute path.
 
 ## 2b. Ensure git (once per session)
 
-Cursor Multitask / worktrees need a git repo. In the science folder:
+Check whether `git init` has already happened (local history and rollback).
+In the science folder:
 
 ```powershell
 git -C "<WORKSPACE_ROOT>" rev-parse --is-inside-work-tree
 ```
 
-If that fails: `git -C "<WORKSPACE_ROOT>" init`. If root `.gitignore` is
-missing, write a short one ignoring `data/raw/`, `.env`, `.Trash/`.
+If that fails (no work tree / no `.git`): **prompt** the user to run
+`git init` here, or clone https://github.com/jymtop/wisp-cursor-bridge if
+they meant the adapter. Do not run `git init` silently.
 
-Already a repo (this folder or a parent): skip. Never `git config`. Never
-commit unless the user asked. Never `git add data/raw/` or secrets.
+Already a repo: say so briefly (已 git init). Local git is for tracking
+changes and easy rollback. Never `git config`. Never commit unless the
+user asked. Never `git add data/raw/` or secrets. Do not ask them to
+push, set origin, or publish the folder.
 
 ## 3. Ensure `research/HANDOFF.md`
 

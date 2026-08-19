@@ -1,0 +1,4 @@
+- “git 检测” means: is git installed, and has `git init` already happened in this folder?
+- If not a repo, prompt the user to `git init` locally (history / rollback), or clone the adapter if that is what they meant.
+- If already a repo, say 已 git init. Do not ask end users to git push or set origin.
+- Adapter vs topic is file-based (`INTEROP.md` + `gateway/` + `tools/sync_wisp_skills.py`), not `git remote`.

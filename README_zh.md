@@ -24,12 +24,19 @@ Cursor 会员模型留在 Cursor 里。Wisp 工作流（技能 + 生物 MCP）�
 
 1. 克隆 [https://github.com/jymtop/wisp-cursor-bridge](https://github.com/jymtop/wisp-cursor-bridge)。
 2. 在 Cursor 中打开**本仓库**（Claude Code 等会读 [AGENTS.md](AGENTS.md)）。
-3. 第一次相关对话时，代理应运行安装检查并**提示你完成设置**（git、批准 MCP、
-   给课题文件夹叠 overlay）。也可以自己跑：
+3. 第一次相关对话时，代理应运行安装检查并**提示你完成设置**（若尚未
+   `git init` 则提示本地初始化、批准 MCP、给课题文件夹叠 overlay）。
+   也可以自己跑：
 
 ```powershell
 uv run --python 3.12 python -m tools.check_bridge_setup
 ```
+
+git 检测的是这个文件夹有没有做过 `git init`（是不是本地仓库）。没有则提示你
+在此 `git init`，方便跟踪改动和回滚；若你本意是用适配器，再 clone 适配器仓库。
+本地 git 只用于记录和回滚，不是为了把课题文件夹发布到网上。适配器与课题靠
+文件区分（`INTEROP.md` + `gateway/` + `tools/sync_wisp_skills.py`），
+不用 `git remote`。
 
 检查脚本会打印一份提示清单。适配器模式：你打开的是桥仓库，科研请换课题文件夹；
 `uv sync --python 3.12` **只**能在这里跑。课题模式：若 `.cursor/mcp.json` 没有
@@ -115,7 +122,7 @@ uv run --python 3.12 python -m tools.sync_wisp_skills
 | `.cursor/`、`gateway/`、`tools/` | 仅 Cursor |
 | `gateway/` | `wisp-bio`（约 247 个生物工具收成 3 个入口）与只读 `wisp-history` |
 | `tools/sync_wisp_skills.py` | 把 Wisp / 插件的 `SKILL.md` 镜像到 `.cursor/skills/` |
-| `tools/check_bridge_setup.py` | 给新克隆用的 git + overlay 提示清单 |
+| `tools/check_bridge_setup.py` | 给新克隆用的本地 `git init` + overlay 提示清单 |
 | `vendor/wisp-science/` | 钉住的 Apache-2.0 技能与 bio-tools |
 
 ## 许可证

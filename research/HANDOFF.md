@@ -1,10 +1,10 @@
 # HANDOFF
 
 - last_app: cursor
-- last_at: 2026-08-19 20:45
+- last_at: 2026-08-19 20:55
 - status: in_progress
 - question: How do new clones of the public adapter recognize WS triggers and get prompted to finish setup?
-- next: After pull, open a fresh Cursor chat on the adapter clone and confirm the agent runs tools/check_bridge_setup and prompts; do science only in a topic folder
+- next: After pull, open a fresh Cursor chat on the adapter clone and confirm the agent runs tools/check_bridge_setup; git check means local git init (prompt if missing), not remote-URL mode switching; do science only in a topic folder
 - key_files:
   - README.md
   - README_zh.md
@@ -12,8 +12,9 @@
   - tools/check_bridge_setup.py
   - tests/test_check_bridge_setup.py
   - .cursor/rules/wisp-bridge.mdc
+  - .cursor/rules/wisp-router.mdc
   - .cursor/skills/ws-continue/SKILL.md
-  - .wisp/topics-root.local.example
+  - docs/bridge-usage.html
 - open_questions:
   - Whether Cursor Settings → Tools & MCP needs a one-time approve of project-level servers in a newly overlaid science window
 - do_not:
@@ -23,3 +24,4 @@
   - do not pass `--user-mcp` as the required default if user MCP already exists
   - do not commit private interop letters under `docs/` (gitignored; keep local-only)
   - do not commit `.cursor/mcp.json` when it contains machine paths or secrets
+  - do not ask end users to git push, set origin, or publish their topic folder

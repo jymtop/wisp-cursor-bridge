@@ -29,12 +29,18 @@ are examples only.
 2. Open **this** folder in Cursor (Claude Code and similar tools read
    [AGENTS.md](AGENTS.md)).
 3. On the first relevant turn the agent should run the setup check and
-   **prompt you** to finish settings (git, MCP approve, overlay a topic
-   folder). You can also run it yourself:
+   **prompt you** to finish settings (local `git init` if needed, MCP
+   approve, overlay a topic folder). You can also run it yourself:
 
 ```powershell
 uv run --python 3.12 python -m tools.check_bridge_setup
 ```
+
+The git check only asks whether this folder already has `git init` (a local
+work tree). If not, you are prompted to `git init` for local history and
+rollback, or to clone the adapter if that is what you meant. Local git is
+not for publishing a topic folder. Adapter vs topic is file-based
+(`INTEROP.md` + `gateway/` + `tools/sync_wisp_skills.py`).
 
 The checker prints a prompt list. Adapter mode means you opened the bridge
 repo: do science elsewhere; `uv sync --python 3.12` is OK **here only**.
@@ -121,7 +127,7 @@ Later Wisp plugins: install them in Wisp, then rerun
 | `.cursor/`, `gateway/`, `tools/` | Cursor only |
 | `gateway/` | `wisp-bio` (3-tool MCP over ~247 bio-tools) and read-only `wisp-history` |
 | `tools/sync_wisp_skills.py` | Mirrors Wisp / plugin `SKILL.md` into `.cursor/skills/` |
-| `tools/check_bridge_setup.py` | Git + overlay prompt list for new clones |
+| `tools/check_bridge_setup.py` | Local `git init` + overlay prompt list for new clones |
 | `vendor/wisp-science/` | Pinned Apache-2.0 skills + bio-tools |
 
 ## License

@@ -13,6 +13,8 @@ state lives on disk (`wisp.handoff.v1` in [INTEROP.md](INTEROP.md)).
 1. If `tools/check_bridge_setup.py` exists (adapter clone), run
    `uv run --python 3.12 python -m tools.check_bridge_setup` and follow its
    prompt list. Do **not** treat the adapter as a science topic.
+   Adapter vs topic is files (`INTEROP.md` + `gateway/` +
+   `tools/sync_wisp_skills.py`).
 2. Else if `.cursor/mcp.json` is missing or has no `wisp-bio`, prompt:
 
    `uv run --directory <adapter-repo> --python 3.12 python -m tools.sync_wisp_skills --science <this-folder>`
@@ -24,18 +26,23 @@ state lives on disk (`wisp.handoff.v1` in [INTEROP.md](INTEROP.md)).
 
 ## Ensure git (once per session)
 
-Cursor Multitask / worktrees need a git repo. At the **workspace root**:
+This check is whether `git init` has already happened (local history and
+rollback). At the **workspace root**:
 
 ```text
 git -C "<WORKSPACE_ROOT>" rev-parse --is-inside-work-tree
 ```
 
-If that fails, run `git -C "<WORKSPACE_ROOT>" init`. If root `.gitignore` is
-missing, write a short one that ignores `data/raw/`, `.env`, `.Trash/`.
+If that fails (no work tree / no `.git`): **prompt** the user to run
+`git init` here, or clone https://github.com/jymtop/wisp-cursor-bridge if
+they meant the adapter. Do not run `git init` silently.
 
-- Already a repo (this folder or a parent): do nothing.
+If it is already a repository: say so briefly (已 git init). Local git is
+for tracking changes and easy rollback.
+
 - Never `git config`. Never commit unless the user asked.
 - Never `git add data/raw/` or secrets.
+- Do not ask the user to push, set origin, or publish this folder.
 
 ## Before a research turn
 

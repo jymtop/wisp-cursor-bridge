@@ -16,6 +16,14 @@ from tools.check_bridge_setup import (
     run_check,
 )
 
+_FORBIDDEN_USER_PHRASES = ("git push", "set origin", "publish this topic")
+
+
+def _assert_no_publish_prompts(text: str) -> None:
+    lowered = text.lower()
+    for phrase in _FORBIDDEN_USER_PHRASES:
+        assert phrase not in lowered
+
 
 def _git(cwd: Path, *args: str, check: bool = True) -> subprocess.CompletedProcess[str]:
     return subprocess.run(
@@ -78,22 +86,56 @@ def test_git_missing_on_adapter_exits_nonzero(tmp_path: Path) -> None:
     assert "ADAPTER_NOT_SCIENCE" in text
 
 
-def test_git_missing_on_plain_folder_exits_zero(tmp_path: Path) -> None:
+def test_git_missing_on_plain_folder_exits_nonzero(tmp_path: Path) -> None:
     report = run_check(tmp_path, git_exe=None, home=tmp_path / "home")
     assert report.mode == "unknown"
-    assert report.exit_code == 0
-    assert report.has_prompt("CLONE_OR_OVERLAY", "todo")
+    assert report.exit_code == 1
+    assert report.has_prompt("INSTALL_GIT", "todo")
+    assert report.has_prompt("GIT_INIT", "todo")
+    _assert_no_publish_prompts(format_report(report))
 
 
-def test_not_a_git_repo_prompts_clone_or_overlay(
+def test_not_a_git_repo_prompts_git_init(
     tmp_path: Path, monkeypatch: pytest.MonkeyPatch
 ) -> None:
     monkeypatch.setenv("GIT_CEILING_DIRECTORIES", str(tmp_path))
     report = run_check(tmp_path, home=tmp_path / "home")
     assert report.is_work_tree is False
     assert report.exit_code == 0
-    assert report.has_prompt("CLONE_OR_OVERLAY", "todo")
-    assert "github.com/jymtop/wisp-cursor-bridge" in format_report(report)
+    assert report.has_prompt("GIT_INIT", "todo")
+    assert not report.has_prompt("CLONE_OR_OVERLAY")
+    text = format_report(report)
+    assert "git init" in text
+    assert "github.com/jymtop/wisp-cursor-bridge" in text
+    _assert_no_publish_prompts(text)
+
+
+def test_after_git_init_recognized_as_initialized(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    monkeypatch.setenv("GIT_CEILING_DIRECTORIES", str(tmp_path))
+    repo = tmp_path / "folder"
+    repo.mkdir()
+    _git(repo, "init", "-b", "main")
+    report = run_check(repo, home=tmp_path / "home")
+    assert report.is_work_tree is True
+    assert report.exit_code == 0
+    assert report.has_prompt("GIT_INITIALIZED", "ok")
+    text = format_report(report)
+    assert "已 git init" in text
+    assert "rollback" in text.lower()
+    _assert_no_publish_prompts(text)
+
+
+def test_initialized_repo_without_remote_is_ok(tmp_path: Path) -> None:
+    repo = _init_repo(tmp_path / "topic")
+    report = run_check(repo, home=tmp_path / "home")
+    assert report.is_work_tree is True
+    assert report.has_prompt("GIT_INITIALIZED", "ok")
+    assert report.origin is None
+    text = format_report(report)
+    _assert_no_publish_prompts(text)
+    assert not any("origin" in item.lower() for item in report.warnings)
 
 
 def test_adapter_mode_by_remote(tmp_path: Path) -> None:
@@ -107,7 +149,10 @@ def test_adapter_mode_by_remote(tmp_path: Path) -> None:
     assert report.exit_code == 0
     assert report.has_prompt("ADAPTER_NOT_SCIENCE")
     assert report.has_prompt("APPROVE_MCP", "todo")
-    assert "topic folder" in format_report(report)
+    assert report.has_prompt("GIT_INITIALIZED", "ok")
+    text = format_report(report)
+    assert "topic folder" in text
+    _assert_no_publish_prompts(text)
 
 
 def test_adapter_mode_by_files_without_matching_remote(tmp_path: Path) -> None:

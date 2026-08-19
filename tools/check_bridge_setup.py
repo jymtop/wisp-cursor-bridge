@@ -5,20 +5,22 @@
 ============================================================================
 Script   : check_bridge_setup.py
 Purpose  : Print a human- and agent-readable prompt list so a new clone
-           can finish Cursor / Claude Code setup (git, adapter vs topic,
-           overlay, MCP approve).
-Question : Is this workspace the adapter repo or a science topic folder,
-           and what should the user do next?
+           can finish Cursor / Claude Code setup (local git init, overlay,
+           MCP approve). Git check = is `git` installed and has `git init`
+           already happened? Adapter vs topic = files, not `git remote`.
+Question : Has this folder been `git init`'d, and what should the user
+           do next (local history only — never ask them to push)?
 Stage    : Onboarding / first open
 Input    : cwd or --path; optional env WISP_TOPICS_ROOT / WISP_ADAPTER_ROOT;
            optional .wisp/topics-root.local (one path line)
-Output   : stdout report; exit 0 unless git is missing while adapter
-           checks require it
+Output   : stdout report; exit 0 unless the git binary is missing so the
+           work-tree check cannot run
 Figure   : (this script does not produce figures)
 Status   : draft
 ---------------------------------------------------------------------------
 边界声明：本脚本【只探测并打印清单】；这里【不】写入 mcp.json、
-          不跑 uv sync、不 init/commit、不读取 live sqlite。
+          不跑 uv sync、不 init/commit/push、不读取 live sqlite。
+          本地 git 只用于跟踪改动和回滚，不要求设置 origin。
 ============================================================================
 """
 
@@ -41,6 +43,16 @@ LOCAL_TOPICS_FILE = Path(".wisp") / "topics-root.local"
 ADAPTER_FILES = ("INTEROP.md",)
 ADAPTER_DIRS = ("gateway",)
 ADAPTER_SCRIPTS = (Path("tools") / "sync_wisp_skills.py",)
+GIT_INIT_PROMPT = (
+    "This folder is not a git repository yet (尚未 git init). "
+    "Run `git init` here to track local changes and make rollback easy. "
+    f"If you meant to use the adapter, clone {CANONICAL_CLONE} instead. "
+    "Local git is enough; a remote is not required."
+)
+GIT_INITIALIZED_PROMPT = (
+    "Already a git repository (已 git init). "
+    "Local git is for tracking changes and easy rollback."
+)
 
 
 @dataclass
@@ -122,6 +134,10 @@ def looks_like_adapter(root: Path) -> bool:
     if not all((root / name).is_dir() for name in ADAPTER_DIRS):
         return False
     return all((root / name).is_file() for name in ADAPTER_SCRIPTS)
+
+
+def has_dot_git(root: Path) -> bool:
+    return (root / ".git").exists()
 
 
 def read_topics_root(
@@ -252,17 +268,18 @@ def run_check(
     report.facts["git"] = "found" if report.git_found else "missing"
 
     if not report.git_found:
+        report.exit_code = 1
         report.prompts.append(
             PromptItem(
                 "INSTALL_GIT",
-                "Install a `git` executable and reopen this folder, or clone "
-                f"{CANONICAL_CLONE} with git.",
+                "Install a `git` executable so this check can tell whether "
+                "`git init` has been done, then reopen this folder. "
+                f"If you meant to use the adapter, clone {CANONICAL_CLONE}.",
             )
         )
         if adapter_by_files:
             report.mode = "adapter"
             report.is_adapter = True
-            report.exit_code = 1
             report.prompts.append(
                 PromptItem(
                     "ADAPTER_NOT_SCIENCE",
@@ -275,33 +292,17 @@ def run_check(
             _add_adapter_setup_prompts(report, home)
         else:
             report.mode = "unknown"
-            report.prompts.append(
-                PromptItem(
-                    "CLONE_OR_OVERLAY",
-                    "Not a git work tree and not the adapter. Clone "
-                    f"{CANONICAL_CLONE} first, or overlay this folder with "
-                    f"`{overlay_command(infer_adapter_root(root, env), root)}` "
-                    "if it is a science topic.",
-                )
-            )
+            report.prompts.append(PromptItem("GIT_INIT", GIT_INIT_PROMPT))
         return report
 
     runner = run_git if run_git is not None else _default_run_git(resolved_git or "git")
     inside = _git_text(runner, ["rev-parse", "--is-inside-work-tree"], root)
-    report.is_work_tree = inside == "true"
+    report.is_work_tree = inside == "true" or has_dot_git(root)
     report.facts["work_tree"] = "yes" if report.is_work_tree else "no"
+    report.facts["git_init"] = "yes" if report.is_work_tree else "no"
 
     if not report.is_work_tree:
-        report.prompts.append(
-            PromptItem(
-                "CLONE_OR_OVERLAY",
-                "This folder is not a git work tree. Clone "
-                f"{CANONICAL_CLONE} first, or you opened a non-git science "
-                "folder — overlay is still allowed: "
-                f"`{overlay_command(infer_adapter_root(root, env), root)}`. "
-                "Never `uv sync` here. Never add `pyproject.toml` here.",
-            )
-        )
+        report.prompts.append(PromptItem("GIT_INIT", GIT_INIT_PROMPT))
         if adapter_by_files:
             report.mode = "adapter"
             report.is_adapter = True
@@ -309,6 +310,10 @@ def run_check(
         else:
             report.mode = "unknown"
         return report
+
+    report.prompts.append(
+        PromptItem("GIT_INITIALIZED", GIT_INITIALIZED_PROMPT, "ok")
+    )
 
     toplevel = _git_text(runner, ["rev-parse", "--show-toplevel"], root)
     if toplevel:
@@ -321,7 +326,8 @@ def run_check(
     report.origin = origin or None
     report.facts["origin"] = origin or "(none)"
     adapter_by_remote = is_bridge_remote(origin)
-    report.is_adapter = adapter_by_remote or adapter_by_files
+    # Files are the adapter definition; remote URL is only a weak extra hint.
+    report.is_adapter = adapter_by_files or adapter_by_remote
     report.facts["adapter_by_remote"] = "yes" if adapter_by_remote else "no"
     report.facts["adapter_by_files"] = "yes" if adapter_by_files else "no"
 
@@ -334,7 +340,8 @@ def run_check(
     report.facts["head"] = head
     if head == "HEAD":
         report.warnings.append(
-            "Detached HEAD. Check out a branch (usually `main`) before pushing."
+            "Detached HEAD. Check out a local branch (usually `main`) "
+            "if you need a named line of history."
         )
 
     counts = parse_ahead_behind(status_sb)
@@ -358,11 +365,6 @@ def run_check(
         ahead, behind = counts
         report.facts["ahead"] = str(ahead)
         report.facts["behind"] = str(behind)
-        if behind > 0:
-            report.warnings.append(
-                f"This branch is behind its upstream by {behind} commit(s). "
-                "Optional: `git fetch` then fast-forward `main`."
-            )
 
     if report.is_adapter:
         report.mode = "adapter"
@@ -417,7 +419,8 @@ def _fill_adapter(report: SetupReport, home: Path | None) -> None:
         PromptItem(
             "ADAPTER_NOT_SCIENCE",
             "You opened the bridge adapter repo "
-            f"(`{BRIDGE_REPO_NAME}`). Do science in a *topic folder*, not here. "
+            "(INTEROP.md + gateway/ + tools/sync_wisp_skills.py). "
+            "Do science in a *topic folder*, not here. "
             f"`uv sync --python 3.12` is OK here only. Clone URL: {CANONICAL_CLONE}",
             "info",
         )
@@ -538,8 +541,8 @@ def format_report(report: SetupReport) -> str:
         f"cwd: {report.cwd}",
         f"mode: {report.mode}",
         f"git: {'found' if report.git_found else 'missing'}",
+        f"git_init: {'yes' if report.is_work_tree else 'no'}",
         f"work_tree: {'yes' if report.is_work_tree else 'no'}",
-        f"origin: {report.origin or '(none)'}",
         f"adapter: {'yes' if report.is_adapter else 'no'}",
         "",
         "PROMPTS",
@@ -558,7 +561,16 @@ def format_report(report: SetupReport) -> str:
     else:
         lines.append("(none)")
     lines.extend(["", "NEXT", "----"])
-    if report.mode == "adapter":
+    if not report.git_found:
+        lines.append(
+            "Install git so this check can tell whether `git init` has been done."
+        )
+    elif not report.is_work_tree:
+        lines.append(
+            "Run `git init` here for local history and rollback, or clone the "
+            "adapter if that is what you meant."
+        )
+    elif report.mode == "adapter":
         lines.append(
             "This is the adapter clone. Finish the checklist above; do not do science here."
         )
@@ -574,14 +586,20 @@ def format_report(report: SetupReport) -> str:
                 "for science work."
             )
     else:
-        lines.append("Clone the adapter or overlay this folder if it is a science topic.")
+        lines.append(
+            "Run `git init` here for local history and rollback, or clone the "
+            "adapter if that is what you meant."
+        )
     lines.append(f"exit: {report.exit_code}")
     return "\n".join(lines) + "\n"
 
 
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(
-        description="Print a Wisp-Cursor bridge setup prompt list (git + overlay)."
+        description=(
+            "Print a Wisp-Cursor bridge setup prompt list "
+            "(local git-init check + overlay)."
+        )
     )
     parser.add_argument(
         "--path",
@@ -591,7 +609,7 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument(
         "--fetch",
         action="store_true",
-        help="Optional `git fetch` before comparing to origin (network).",
+        help="Optional network fetch for maintainers of this adapter clone.",
     )
     args = parser.parse_args(argv)
     target = Path(args.path) if args.path else Path.cwd()

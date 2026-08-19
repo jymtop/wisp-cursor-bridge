@@ -191,12 +191,24 @@
         <p data-i18n="zh">
           打开本适配器仓库时，代理应运行检查并提示你完成设置。也可自己跑：
           <code>uv run --python 3.12 python -m tools.check_bridge_setup</code>。
+          git 检测的是有没有做过 <code>git init</code>（是不是本地仓库）。
+          没有则提示你在此初始化，方便跟踪改动和回滚；若本意是用适配器，再 clone。
+          本地 git 只用于记录和回滚。适配器与课题靠文件区分
+          （<code>INTEROP.md</code> + <code>gateway/</code> +
+          <code>tools/sync_wisp_skills.py</code>），不用 <code>git remote</code>。
           不要粘贴别人的个人 User Rules。
         </p>
         <p data-i18n="en" hidden>
           When you open this adapter clone, the agent should run the setup
           check and prompt you. You can also run
           <code>uv run --python 3.12 python -m tools.check_bridge_setup</code>.
+          The git check only asks whether <code>git init</code> has already
+          happened. If not, you are prompted to <code>git init</code> for
+          local history and rollback, or to clone the adapter if that is
+          what you meant. Local git is not for publishing a topic folder.
+          Adapter vs topic is file-based
+          (<code>INTEROP.md</code> + <code>gateway/</code> +
+          <code>tools/sync_wisp_skills.py</code>).
           Do not paste someone else’s personal User Rules.
         </p>
       </section>
