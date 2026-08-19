@@ -1,12 +1,13 @@
 # HANDOFF
 
 - last_app: cursor
-- last_at: 2026-08-19 18:40
+- last_at: 2026-08-19 19:15
 - status: in_progress
 - question: How to continue a Wisp Science (WS) task from a topic folder via path or spoken trigger
-- next: Open a Wisp topic folder in Cursor (not this adapter) and continue from that folder’s HANDOFF
+- next: Keep private interop letters local-only; continue WS work from a topic folder HANDOFF, not this adapter
 - key_files:
-  - docs/bridge-usage.html
+  - README.md
+  - README_zh.md
   - .cursor/skills/ws-continue/SKILL.md
   - .cursor/rules/wisp-bridge.mdc
   - research/SKILL-CATALOG.md
@@ -18,3 +19,4 @@
   - do not run `uv sync` outside this adapter repo
   - do not treat this adapter folder as the daily science project
   - do not pass `--user-mcp` as the required default if user MCP already exists
+  - do not commit private interop letters under `docs/` (gitignored; keep local-only)
